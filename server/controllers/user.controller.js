@@ -205,3 +205,45 @@ export const fetchUserById = async (req, res) => {
     });
   }
 };
+
+export const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { fullName, email, dob, profileImage } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "UserId is requirede to update user profile",
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User Not found using this ID",
+      });
+    }
+
+    user.fullName = fullName || user.fullName;
+    user.email = email || user.email;
+    user.dob = dob || user.dob;
+    user.profileImage = profileImage || user.profileImage;
+
+    const updatedUser = await user.save();
+    return res.status(200).json({
+      success: true,
+      message: "user Profile Update Successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.log("Error while updating user profile:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Error while updating user profile",
+      error: error,
+    });
+  }
+};

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { getUserToken } from "../../utils/auth";
 
 export const fetchAllUser = createAsyncThunk("user/fetchAllUser", async () => {
   try {
@@ -101,6 +102,33 @@ export const unblockUser = createAsyncThunk(
   }
 );
 
+export const editUserProfile = createAsyncThunk(
+  "user/edituserProfile",
+  async (updatedData, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/users/update/${updatedData.id}`,
+        updatedData,
+        {
+          headers: {
+            Authorization: `Bearer ${getUserToken()}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        return response.data.user;
+      } else {
+        throw new Error("Failed To update User Profile");
+      }
+    } catch (error) {
+      console.error("Error updating User Profile:", error);
+      return rejectWithValue(
+        error.response?.data?.message || " Failed to update User Profile"
+      );
+    }
+  }
+);
+
 export const userSlice = createSlice({
   name: "users",
   initialState: {
@@ -145,6 +173,18 @@ export const userSlice = createSlice({
       .addCase(fetchUserById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(editUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(editUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(editUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || "failed to update user Profile";
       });
   },
 });

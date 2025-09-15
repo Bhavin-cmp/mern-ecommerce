@@ -6,10 +6,13 @@ import { useEffect, useRef, useState } from "react";
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.cart);
+  const wishListCount = useSelector((state) => state.wishList.items.length);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  // console.log("user informationssss", userInfo.user.userName);
 
   const logoutHandler = () => {
     if (window.confirm("Are you sure you want to logout?")) {
@@ -42,17 +45,34 @@ const Header = () => {
             to="/product"
             className={({ isActive }) =>
               isActive
-                ? "text-primary font-medium"
+                ? "!text-pink-600 !font-medium"
                 : "hover:text-primary font-medium"
             }
           >
             Products
           </NavLink>
+
+          <NavLink
+            to="/wishlist"
+            className={({ isActive }) =>
+              `relative font-medium ${
+                isActive ? "!text-pink-600" : "!hover:text-primary"
+              }`
+            }
+          >
+            WishList
+            {wishListCount > 0 && (
+              <span className="ml-1 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">
+                {wishListCount}
+              </span>
+            )}
+          </NavLink>
+
           <NavLink
             to="/cart"
             className={({ isActive }) =>
               isActive
-                ? "text-primary font-medium"
+                ? "!text-pink-600 !font-medium"
                 : "hover:text-primary font-medium"
             }
           >
@@ -71,7 +91,7 @@ const Header = () => {
               >
                 <img
                   src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                    userInfo.name || userInfo.userName || "User"
+                    userInfo.user.userName || "User"
                   )}&background=0D8ABC&color=fff&size=64`}
                   alt="avatar"
                   className="w-10 h-10 rounded-full border border-sky-400 shadow-sm group-hover:shadow-md transition"
@@ -79,7 +99,9 @@ const Header = () => {
 
                 {/* Optional name next to avatar */}
                 <span className="hidden md:block text-sm font-medium text-sky-800 group-hover:text-sky-900">
-                  {userInfo.name?.split(" ")[0] || userInfo.userName || "User"}
+                  {userInfo.user.userName?.split(" ")[0] ||
+                    userInfo.userName ||
+                    "User"}
                 </span>
               </button>
 
