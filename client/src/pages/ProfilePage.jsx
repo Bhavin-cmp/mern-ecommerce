@@ -19,7 +19,7 @@ const ProfilePage = () => {
     dispatch(fetchUserOrders());
   }, [dispatch]);
 
-  console.log("user arrayyyyyyyyyyyyyy", orders);
+  // console.log("user arrayyyyyyyyyyyyyy", orders);
 
   const userOrders = orders?.filter((order) => order?.user === user?._id);
   const totalOrders = userOrders?.length || 0;
@@ -100,7 +100,11 @@ const ProfilePage = () => {
               </li>
               <li>
                 <strong>Registered On:</strong>{" "}
-                {new Date(user.createdAt).toLocaleDateString()}
+                {new Date(user.createdAt).toLocaleDateString("en-IN", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
               </li>
               <li>
                 <strong>Total Orders Placed:</strong> {totalOrders}

@@ -11,6 +11,22 @@
 .animate-fade-in {
   animation: fade-in 0.2s ease-out;
 }
+/* In your CSS file */
+@keyframes pulseHeart {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-heart {
+  animation: pulseHeart 0.3s ease-in-out;
+}
 
 body {
   justify-content: center;

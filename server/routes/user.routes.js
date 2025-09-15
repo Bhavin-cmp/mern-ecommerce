@@ -4,6 +4,7 @@ import {
   fetchUserById,
   login,
   register,
+  updateUserProfile,
 } from "../controllers/user.controller.js";
 import { admin, protect } from "../middlewares/authMiddleware.js";
 import { blockUser, unblockUser } from "../controllers/BlockUser.controller.js";
@@ -25,5 +26,8 @@ userRouter.put("/:id/block", protect, admin, blockUser);
 
 // Unblock User
 userRouter.put("/:id/unblock", protect, admin, unblockUser);
+
+//Update User Profile
+userRouter.put("/update/:id", protect, updateUserProfile);
 
 export default userRouter;

@@ -1,12 +1,23 @@
 import { Link, useNavigate } from "react-router-dom";
-import { FaStar } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { FaStar, FaHeart } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
+import {
+  addToWishList,
+  fetchWishList,
+  removeFromWishList,
+} from "../redux/slices/wishlistSlice";
+import { getUserId } from "../utils/auth";
 
 const ProductCard = ({ product }) => {
+  // console.log("Product Card Product Data", product);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isLoggedIn = !!localStorage.getItem("token");
+
+  const items = useSelector((state) => state.wishList.items);
+  // console.log("Items detailssssssssss", items);
+  const isInWishlist = items.some((item) => item._id === product._id);
 
   const renderRating = () => (
     <div className="flex items-center text-sm mt-1">
@@ -29,8 +40,46 @@ const ProductCard = ({ product }) => {
     dispatch(addToCart({ productId: product._id, quantity: 1 }));
   };
 
+  const handleWishlistToggle = async () => {
+    if (!isLoggedIn) {
+      alert("Please login to manage wishlist");
+      navigate("/login");
+      return;
+    }
+
+    if (isInWishlist) {
+      await dispatch(removeFromWishList({ productId: product._id }));
+    } else {
+      // const userId = JSON.parse(localStorage.getItem("userInfo"))?.user?.id;
+      const userId = getUserId();
+      const result = await dispatch(addToWishList({ productId: product._id }));
+      if (result.meta.requestStatus === "fulfilled") {
+        dispatch(fetchWishList(userId));
+      }
+    }
+  };
+
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-md hover:shadow-lg transition flex flex-col group">
+    <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-md hover:shadow-lg transition flex flex-col group relative">
+      {/* Wishlist Button */}
+      <button
+        onClick={handleWishlistToggle}
+        className="absolute top-4 right-4 text-xl"
+      >
+        <FaHeart
+          className={`${
+            isInWishlist
+              ? "text-red-500 animate-heart"
+              : "text-gray-400 hover:text-red-500"
+          } transition-transform duration-300`}
+        />
+      </button>
+      {/*  <button
+        onClick={() => dispatch(addToWishList({ productId: product._id }))}
+      >
+        {isInWishlist ? "❤️" : "🤍"}
+      </button> */}
+
       <Link
         to={`/product/${product._id}`}
         className="w-full h-56 bg-gray-100 rounded-xl mb-4 overflow-hidden flex items-center justify-center"

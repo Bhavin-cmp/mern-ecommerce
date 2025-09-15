@@ -12,6 +12,8 @@ import cartRouter from "./routes/Cart.routes.js";
 import addressRoute from "./routes/address.routes.js";
 import productReview from "./routes/review.routes.js";
 import razorPayRouter from "./routes/razorPay.routes.js";
+import wishlistRouter from "./routes/wishlist.routes.js";
+import userActivityRouter from "./routes/activityLog.routes.js";
 
 dotenv.config();
 const app = express();
@@ -33,6 +35,8 @@ app.use("/api/cart", cartRouter);
 app.use("/api/addresses", addressRoute);
 app.use("/api/productReview", productReview);
 app.use("/api/razorpay", razorPayRouter);
+app.use("/api/wishList", wishlistRouter);
+app.use("/api/logs", userActivityRouter);
 
 app.get("/", (req, res) => {
   return res.send("Api is Running");
